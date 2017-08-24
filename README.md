@@ -1,4 +1,5 @@
 # polymath: A Python C-Extension Module for Polynomials over GF(2)
+![Master Branch Build Status Indicator](https://travis-ci.org/taudor/polymath.svg?branch=master)
 
 polymath is a lightweight and fast C-Extension for python3/numpy for
 univariate polynomials with coefficients from the finite field GF(2).
