@@ -125,6 +125,12 @@ PyDoc_STRVAR(
     "divs : array_like\n"
     "\tDivisor.");
 
+PyDoc_STRVAR(
+    polymath_doc,
+    "polymath is a lightweight and fast C-Extension for \n"
+    "python3/numpy for univariate polynomials with coefficients \n"
+    "from the finite field GF(2).\n");
+
 static PyMethodDef PolymathMethods[] = {
 	{"polymul",  poly_mul, METH_VARARGS, polymul_doc},
 	{"polymodpad",  poly_mod_pad, METH_VARARGS, polymodpad_doc},
@@ -134,7 +140,7 @@ static PyMethodDef PolymathMethods[] = {
 static struct PyModuleDef polymathmodule = {
    PyModuleDef_HEAD_INIT,
    "polymath",   /* name of module */
-   NULL, /* module documentation, may be NULL */
+   polymath_doc, /* module documentation, may be NULL */
    -1,	   /* size of per-interpreter state of the module,
 				or -1 if the module keeps state in global variables. */
    PolymathMethods
