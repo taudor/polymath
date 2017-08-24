@@ -1,7 +1,7 @@
 language: python
 env:
   - CC=clang
-  - CC=gcc
+  - CC="gcc -std=c99"
 python:
   - "3.4"
   - "3.5"

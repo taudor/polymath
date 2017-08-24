@@ -3,8 +3,6 @@
 from distutils.core import setup, Extension
 import numpy
 
-print(numpy.get_include())
-
 polymath = Extension('polymath',
                     include_dirs=['/usr/local/include', numpy.get_include() + '/numpy'],
                                   # '/usr/local/Cellar/numpy/1.13.1/lib/python2.7/site-packages/numpy/core/include/numpy',
