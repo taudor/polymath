@@ -1,11 +1,13 @@
 language: python
 env:
   - CC=clang
+  - CC=gcc
 python:
   - "3.4"
   - "3.5"
   - "3.6"
 install:
+  - pip install -r requirements.txt
   - python setup.py install
 script:
   - python -m unittest
