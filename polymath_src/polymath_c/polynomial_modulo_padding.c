@@ -1,5 +1,5 @@
 /*
- * This file implements the function polynomial_modulo from libpolymath.c
+ * This file implements the function polynomial_modulo from libpolymath.h
  */
 
 #include "libpolymath.h"

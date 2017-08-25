@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "./polymath_c/libpolymath.h"
+#include "polymath_c/libpolymath.h"
 
 static PyObject* 
 poly_mul(PyObject *self, PyObject *args)

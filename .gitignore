@@ -22,8 +22,10 @@ node_modules
 .sass-cache
 .idea/
 build/
+dist/
 playground_file.py
 polymath_src/test.c
+MANIFEST
 
 # C build folder
 polymath_src/polymath_c/cmake-build-debug/
