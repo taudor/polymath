@@ -129,6 +129,15 @@ $ python3 -m unittest
 
 in your terminal.
 
+## Benchmark
+
+To compare the `polymath` implementation with `numpy` use the
+`benchmark.py` file. For help type
+
+```
+python3 benchmark.py --help
+```
+
 ## Help
 
 For help or information about the functions type
