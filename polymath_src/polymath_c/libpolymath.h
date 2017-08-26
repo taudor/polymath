@@ -99,7 +99,7 @@ void shift_LFSR(Poly_Array* lfsr, uint64_t* out, const uint64_t* in);
 
 
 /*
- * Computes the remainder of tow polynomials
+ * Computes the remainder of tow polynomials with 0 padding
  *
  * The first polynomial A is used as the dividend and the second B as the
  * divisor. That means, that there exist polynomials Q and R with
@@ -124,6 +124,32 @@ void
 polynomial_modulo_padding(const uint64_t* A, uint64_t n,
                           const uint64_t* B, uint64_t m,
                           uint64_t** ret_ptr, uint64_t* ret_len);
+
+
+/*
+ * Computes the remainder of tow polynomials
+ *
+ * The first polynomial A is used as the dividend and the second B as the
+ * divisor. That means, that there exist polynomials Q and R with
+ * deg(R) < deg(B), such that A = Q * B + R.
+ * R is computed in the course of the polynomial_modulo_padding function.
+ *
+ * Parameters
+ * A        -   Pointer to the data of the dividend polynomial
+ * n        -   Number of elements / coefficients of the dividend
+ * B        -   Pointer to the data of the divisor polynomial. If the
+ *              divisor is a zero array, the behaviour is undefined.
+ * m        -   Number of elements / coefficients of the divisor
+ * ret_ptr  -   Address of the pointer to the data of the remainder after
+ *              successful completion of the function.
+ * ret_len  -   Number of elements / coefficients of the remainder.
+ *              The result array is filled with zeros from top and has
+ *              therefore always length (deg(B) - 1).
+ */
+void
+polynomial_modulo(const uint64_t* A, uint64_t n,
+                  const uint64_t* B, uint64_t m,
+                  uint64_t** ret_ptr, uint64_t* ret_len);
 
 
 /*

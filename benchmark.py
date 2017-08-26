@@ -11,7 +11,7 @@ import polymath as pm
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("function", help="Name of the function to benchmark.", choices=["mult", "mod_pad"])
+    parser.add_argument("function", help="Name of the function to benchmark.", choices=["mult", "mod_pad", "mod"])
     parser.add_argument("bits", help="Bit length of the polynomials.", type=int, choices=[8, 16, 24, 32, 48, 64])
     parser.add_argument("samples", help="Number of samples to compute.", type=int)
     parser.add_argument("iterations", help="Number of iterations", type=int)
@@ -65,7 +65,7 @@ def main():
                 np.testing.assert_array_equal(p1, p2)
 
     elif args.function == "mod_pad":
-        print("Computing remainder for", args.samples, "samples using", args.bits,
+        print("Computing remainder with padding for", args.samples, "samples using", args.bits,
               "*", args.bits ,"bit polynomials:")
 
         # computing bigger polynomials
@@ -80,6 +80,25 @@ def main():
             start_pm = time.time()
             res_pm = [pm.polymodpad(p1, f) for p1 in mult_samples]
             time_pm.append(time.time() - start_pm)
+
+
+    elif args.function == "mod":
+        print("Computing remainder for", args.samples, "samples using", args.bits,
+              "*", args.bits ,"bit polynomials:")
+
+        # computing bigger polynomials
+        mult_samples = [pm.polymul(p1, p2) for p1, p2 in zip(samples1, samples2)]
+
+        for i in range(args.iterations):
+            print("Iteration {:5d} / {}".format(i, args.iterations), end='\r')
+            start_np = time.time()
+            res_np = [np.polydiv(p1, f)[1].astype(int) % 2 for p1 in mult_samples]
+            time_np.append(time.time() - start_np)
+
+            start_pm = time.time()
+            res_pm = [pm.polymod(p1, f) for p1 in mult_samples]
+            time_pm.append(time.time() - start_pm)
+
 
     print("               {:>8} / {:>8} / {:>8}".format("min", "max", "avrg"))
     print("numpy time   : {:8.4f} / {:8.4f} / {:8.4f} ms".format(

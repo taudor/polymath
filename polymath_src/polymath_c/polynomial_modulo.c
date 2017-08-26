@@ -5,7 +5,7 @@
 #include "libpolymath.h"
 
 void
-polynomial_modulo_padding(const uint64_t* A, uint64_t n,
+polynomial_modulo(const uint64_t* A, uint64_t n,
                           const uint64_t* B, uint64_t m,
                           uint64_t** ret_ptr, uint64_t* ret_len)
 {
@@ -26,14 +26,14 @@ polynomial_modulo_padding(const uint64_t* A, uint64_t n,
 
     /* Check if dividend (A) is 0 */
     if (!n) {
-        *ret_len = m - 1;
-        *ret_ptr = calloc(m - 1, sizeof(uint64_t));  // TODO check for NULL return
+        *ret_len = 1;
+        *ret_ptr = calloc(1, sizeof(uint64_t));  // TODO check for NULL return
         return;
     }
     if (n < m) {
-        *ret_len = m - 1;
-        *ret_ptr = calloc(m - 1, sizeof(uint64_t));     // TODO check for NULL return
-        memmove(*ret_ptr + m - 1 - n, A, sizeof(uint64_t) * n);
+        *ret_len = n;
+        *ret_ptr = malloc(n * sizeof(uint64_t));     // TODO check for NULL return
+        memmove(*ret_ptr, A, n * sizeof(uint64_t));
         for (size_t i = 0; i < *ret_len; i++)
             *(*ret_ptr + i) &= 0x0000000000000001;
         return;
@@ -61,9 +61,21 @@ polynomial_modulo_padding(const uint64_t* A, uint64_t n,
         }
     }
 
-    *ret_ptr = Poly_Array_to_uint64(&lfsr);
+    uint64_t* ret_tmp = Poly_Array_to_uint64(&lfsr);
     *ret_len = m - 1;
+
+    /* search for highest one coefficient */
+    uint64_t ctr3 = 0;
+    while(!*(ret_tmp + ctr3))
+        ctr3++;
+    *ret_len -= ctr3;
+
+    *ret_ptr = malloc(*ret_len * sizeof(uint64_t));
+    memmove(*ret_ptr, ret_tmp + ctr3, *ret_len * sizeof(uint64_t));
+
+    free(ret_tmp);
     free(lfsr.poly);
     free(b.poly);
     return;
 }
+
