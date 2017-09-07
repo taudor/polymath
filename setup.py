@@ -14,12 +14,13 @@ polymath = Extension('polymath',
                              'polymath_src/polymath_c/polynomial_multiplication.c',
                              'polymath_src/polymath_c/polynomial_modulo_padding.c',
                              'polymath_src/polymath_c/polynomial_modulo.c',
+                             'polymath_src/polymath_c/dot.c'
                              ],
                      )
 
 setup(name='polymath',
       packages=['polymath_src'],
-      version='0.1.11',
+      version='0.1.12',
       description='Lightweight and fast implementation of polynomial operations over GF(2).',
       author='Tudor Soroceanu',
       author_email='tudor200@zedat.fu-berlin.de',

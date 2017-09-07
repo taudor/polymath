@@ -25,6 +25,7 @@ build/
 dist/
 playground_file.py
 polymath_src/test.c
+polymath_src/test
 MANIFEST
 
 # C build folder

@@ -181,4 +181,14 @@ polynomial_multiplication(const uint64_t* A, uint64_t n,
                           const uint64_t* B, uint64_t m,
                           uint64_t** ret_ptr, uint64_t* ret_len);
 
+/*
+ * The dot product of an array with shape (N, k, n) with an
+ * array of shape (k, n).
+ * The result has shape (N, k)
+ */
+void
+dot(const int64_t* inputs, const double* weights,
+    uint64_t n, uint64_t k, uint64_t N,
+    double** ret_ptr);
+
 #endif

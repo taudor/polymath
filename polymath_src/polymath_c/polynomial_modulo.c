@@ -6,8 +6,8 @@
 
 void
 polynomial_modulo(const uint64_t* A, uint64_t n,
-                          const uint64_t* B, uint64_t m,
-                          uint64_t** ret_ptr, uint64_t* ret_len)
+                  const uint64_t* B, uint64_t m,
+                  uint64_t** ret_ptr, uint64_t* ret_len)
 {
     /* Compute remainder of a/b */
 
