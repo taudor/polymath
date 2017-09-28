@@ -35,4 +35,5 @@ polymath_src/polymath_c/cmake-build-debug/
 env/
 
 polymath.egg-info/
+.eggs/
 
