@@ -1,6 +1,6 @@
 #include <Python.h>
-#include <ndarraytypes.h>
-#include <ndarrayobject.h>
+#include <numpy/ndarraytypes.h>
+#include <numpy/ndarrayobject.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -175,6 +175,47 @@ poly_dot(PyObject *self, PyObject *args)
 	return ret;
 }
 
+static PyObject* 
+poly_eval_id_xor(PyObject *self, PyObject *args)
+{
+	PyObject* in1;
+	PyObject* in2;
+	PyObject* arr1;
+	PyObject* arr2;
+
+	// get arguments
+	PyArg_ParseTuple(args, "OO:", &in1, &in2);
+
+	// get np arrays
+	arr1 = PyArray_FROM_OTF(in1, NPY_NOTYPE, NPY_IN_ARRAY);
+	arr2 = PyArray_FROM_OTF(in2, NPY_NOTYPE, NPY_IN_ARRAY);
+	// get dimension of inputs, i.e. N, k, n
+	uint64_t* dim = (uint64_t*) PyArray_DIMS(arr1);
+	uint64_t N = *(dim);
+	uint64_t n = *(dim + 1);
+	uint64_t* dim_weights = (uint64_t*) PyArray_DIMS(arr2);
+	uint64_t k = *(dim_weights);
+	
+	// get data from arrays
+	int64_t* dptr1 = (int64_t*) (PyArray_DATA(arr1));
+	double*  dptr2 = (double*) (PyArray_DATA(arr2));
+	// initialze return arrays
+	int64_t* res;
+
+	// perform polynomial division
+	eval_id_xor(dptr1, dptr2, n, k, N, &res);
+	// dimension of return array, i.e. the number of values
+	npy_intp dims[1] = {N};
+	// create new array to return
+	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_INT64, res);
+	// increment counter, so that the memory is not freed
+	Py_INCREF(ret);
+	// forward the responsibility of the free to numpy
+	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
+	
+	return ret;
+}
+
 /* Python documentation for functions */
 PyDoc_STRVAR(
     polymul_doc,
@@ -236,6 +277,30 @@ PyDoc_STRVAR(
     "The second parameter is of shape (k, n) and represents\n"
     "the weight arrays of a k-Arbiter PUF.\n"
     "The result is an array of shape (N, k) and represents\n"
+    "the evaluated real-value challenges with the k-Arbiter PUF.\n"
+    "\n"
+    "Parameters\n"
+    "----------\n"
+    "inputs : array_like\n"
+    "\tChallenges.\n"
+    "weights : array_like\n"
+    "\tWeights.\n\n"
+    "Return\n"
+    "------\n"
+    "return: array_like\n"
+    "\tEvaluated challenges."
+    );
+
+PyDoc_STRVAR(
+    eval_id_xor_doc,
+    "eval_id_xor(inputs, weights)\n"
+    "--\n\n"
+    "Evaluate N inputs from given weights.\n\n"
+    "The fist parameter is of shape (N, k, n) and\n"
+    "represents a set of N challenges for a k-Arbiter PUF.\n"
+    "The second parameter is of shape (k, n) and represents\n"
+    "the weight arrays of a k-Arbiter PUF.\n"
+    "The result is an array of shape (N) and represents\n"
     "the evaluated challenges with the k-Arbiter PUF.\n"
     "\n"
     "Parameters\n"
@@ -247,7 +312,7 @@ PyDoc_STRVAR(
     "Return\n"
     "------\n"
     "return: array_like\n"
-    "\tEvaluated challengs."
+    "\tEvaluated challenges with sign."
     );
 
 PyDoc_STRVAR(
@@ -261,6 +326,7 @@ static PyMethodDef PolymathMethods[] = {
 	{"polymodpad",  poly_mod_pad, METH_VARARGS, polymodpad_doc},
 	{"polymod",  poly_mod, METH_VARARGS, polymod_doc},
 	{"dot",  poly_dot, METH_VARARGS, dot_doc},
+	{"eval_id_xor",  poly_eval_id_xor, METH_VARARGS, eval_id_xor_doc},
 	{NULL, NULL, 0, NULL}		/* Sentinel */
 };
 

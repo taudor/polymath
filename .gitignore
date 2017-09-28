@@ -31,3 +31,8 @@ MANIFEST
 # C build folder
 polymath_src/polymath_c/cmake-build-debug/
 
+# virtualenv folder
+env/
+
+polymath.egg-info/
+

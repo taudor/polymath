@@ -191,4 +191,14 @@ dot(const int64_t* inputs, const double* weights,
     uint64_t n, uint64_t k, uint64_t N,
     double** ret_ptr);
 
+/*
+ * Evaluates N challenges with the weights.
+ * inputs has shape (N, n), weights has shape (k, n).
+ * Returns an array with N elements that are -1 or 1.
+ */
+void
+eval_id_xor(const int64_t* inputs, const double* weights,
+            uint64_t n, uint64_t k, uint64_t N,
+            int64_t** ret_ptr);
+
 #endif
