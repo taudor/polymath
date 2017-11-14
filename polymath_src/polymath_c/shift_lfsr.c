@@ -4,10 +4,10 @@
 
 #include "libpolymath.h"
 
-void shift_LFSR(Poly_Array* lfsr, uint64_t* out, const uint64_t* in) {
+void shift_LFSR(Poly_Array* lfsr, uint8_t* out, const uint8_t* in) {
     /* determine output bit of the LFSR */
     uint64_t mask = (uint64_t) 1 << (lfsr->deg % (UINT64_BITS));
-    *out = (mask & *(lfsr->poly)) >> (lfsr->deg % (UINT64_BITS));
+    *out = (uint8_t) 1 & ((mask & *(lfsr->poly)) >> (lfsr->deg % (UINT64_BITS)));
     /* shift all the data through the array */
     for (size_t i = 0; i < lfsr->len - 1; i++) {
         *(lfsr->poly + i) <<= 1;

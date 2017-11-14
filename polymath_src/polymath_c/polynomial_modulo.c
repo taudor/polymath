@@ -5,9 +5,9 @@
 #include "libpolymath.h"
 
 void
-polynomial_modulo(const uint64_t* A, uint64_t n,
-                  const uint64_t* B, uint64_t m,
-                  uint64_t** ret_ptr, uint64_t* ret_len)
+polynomial_modulo(const uint8_t* A, uint64_t n,
+                  const uint8_t* B, uint64_t m,
+                  uint8_t** ret_ptr, uint64_t* ret_len)
 {
     /* Compute remainder of a/b */
 
@@ -27,19 +27,19 @@ polynomial_modulo(const uint64_t* A, uint64_t n,
     /* Check if dividend (A) is 0 */
     if (!n) {
         *ret_len = 1;
-        *ret_ptr = calloc(1, sizeof(uint64_t));  // TODO check for NULL return
+        *ret_ptr = calloc(1, sizeof(uint8_t));  // TODO check for NULL return
         return;
     }
     if (n < m) {
         *ret_len = n;
-        *ret_ptr = malloc(n * sizeof(uint64_t));     // TODO check for NULL return
-        memmove(*ret_ptr, A, n * sizeof(uint64_t));
+        *ret_ptr = malloc(n * sizeof(uint8_t));     // TODO check for NULL return
+        memmove(*ret_ptr, A, n * sizeof(uint8_t));
         for (size_t i = 0; i < *ret_len; i++)
-            *(*ret_ptr + i) &= 0x0000000000000001;
+            *(*ret_ptr + i) &= 0x01;
         return;
     }
 
-    Poly_Array b = uint64_to_Poly_Array(B + 1, m - 1);
+    Poly_Array b = uint8_to_Poly_Array(B + 1, m - 1);
     /* Initialize empty LFSR with length of B */
     Poly_Array lfsr;
     lfsr.deg = m - 2;
@@ -47,7 +47,7 @@ polynomial_modulo(const uint64_t* A, uint64_t n,
     lfsr.poly = calloc(lfsr.len, sizeof(uint64_t));
 
     /* Move first m coefficients of A into LFSR */
-    uint64_t out;
+    uint8_t out;
     for (size_t i = 0; i < lfsr.deg; i++) {
         shift_LFSR(&lfsr, &out, (A + i));
     }
@@ -61,7 +61,7 @@ polynomial_modulo(const uint64_t* A, uint64_t n,
         }
     }
 
-    uint64_t* ret_tmp = Poly_Array_to_uint64(&lfsr);
+    uint8_t* ret_tmp = Poly_Array_to_uint8(&lfsr);
     *ret_len = m - 1;
 
     /* search for highest one coefficient */
@@ -70,8 +70,8 @@ polynomial_modulo(const uint64_t* A, uint64_t n,
         ctr3++;
     *ret_len -= ctr3;
 
-    *ret_ptr = malloc(*ret_len * sizeof(uint64_t));
-    memmove(*ret_ptr, ret_tmp + ctr3, *ret_len * sizeof(uint64_t));
+    *ret_ptr = malloc(*ret_len * sizeof(uint8_t));
+    memmove(*ret_ptr, ret_tmp + ctr3, *ret_len * sizeof(uint8_t));
 
     free(ret_tmp);
     free(lfsr.poly);

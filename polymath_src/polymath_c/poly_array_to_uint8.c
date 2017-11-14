@@ -4,9 +4,9 @@
 
 #include "libpolymath.h"
 
-uint64_t* Poly_Array_to_uint64(Poly_Array* poly)
+uint8_t* Poly_Array_to_uint8(Poly_Array* poly)
 {
-    uint64_t* ret = malloc(sizeof(uint64_t) * (poly->deg + 1));
+    uint8_t* ret = malloc(sizeof(uint8_t) * (poly->deg + 1));
     if (ret) {
         uint64_t ctr = poly->deg;
         uint64_t mask = 1;

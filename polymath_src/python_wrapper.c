@@ -30,10 +30,10 @@ poly_mul(PyObject *self, PyObject *args)
 	uint64_t* len2 = (uint64_t*) PyArray_DIMS(arr2);
 	// return Py_BuildValue("i", *len1);
 	// get data from arrays
-	uint64_t* dptr1 = (uint64_t*)(PyArray_DATA(arr1));
-	uint64_t* dptr2 = (uint64_t*)(PyArray_DATA(arr2));
+	uint8_t* dptr1 = (uint8_t*)(PyArray_DATA(arr1));
+	uint8_t* dptr2 = (uint8_t*)(PyArray_DATA(arr2));
 	// initialze return arrays
-	uint64_t* mult_res;
+	uint8_t* mult_res;
 	uint64_t res_len;
 
 	// perform polynomial division
@@ -41,9 +41,11 @@ poly_mul(PyObject *self, PyObject *args)
 	// dimension of return array, i.e. the number of values
 	npy_intp dims[1] = {res_len};
 	// create new array to return
-	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_UINT64, mult_res);
+	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_INT8, mult_res);
 	// increment counter, so that the memory is not freed
-	Py_INCREF(ret);
+	Py_DECREF(arr1);
+    Py_DECREF(arr2);
+    // Py_INCREF(ret);
 	// forward the responsibility of the free to numpy
 	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
 
@@ -70,10 +72,10 @@ poly_mod_pad(PyObject *self, PyObject *args)
 	uint64_t* len2 = (uint64_t*) PyArray_DIMS(arr2);
 	// return Py_BuildValue("i", *len1);
 	// get data from arrays
-	uint64_t* dptr1 = (uint64_t*)(PyArray_DATA(arr1));
-	uint64_t* dptr2 = (uint64_t*)(PyArray_DATA(arr2));
+	uint8_t* dptr1 = (uint8_t*)(PyArray_DATA(arr1));
+	uint8_t* dptr2 = (uint8_t*)(PyArray_DATA(arr2));
 	// initialze return arrays
-	uint64_t* mod_res;
+	uint8_t* mod_res;
 	uint64_t res_len;
 
 	// perform polynomial division
@@ -83,9 +85,11 @@ poly_mod_pad(PyObject *self, PyObject *args)
 	// dimension of return array, i.e. the number of values
 	npy_intp dims[1] = {res_len};
 	// create new array to return
-	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_UINT64, mod_res);
+	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_INT8, mod_res);
 	// increment counter, so that the memory is not freed
-	Py_INCREF(ret);
+	Py_DECREF(arr1);
+    Py_DECREF(arr2);
+    // Py_INCREF(ret);
 	// forward the responsibility of the free to numpy
 	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
 	
@@ -111,10 +115,10 @@ poly_mod(PyObject *self, PyObject *args)
 	uint64_t* len2 = (uint64_t*) PyArray_DIMS(arr2);
 	// return Py_BuildValue("i", *len1);
 	// get data from arrays
-	uint64_t* dptr1 = (uint64_t*)(PyArray_DATA(arr1));
-	uint64_t* dptr2 = (uint64_t*)(PyArray_DATA(arr2));
+	uint8_t* dptr1 = (uint8_t*)(PyArray_DATA(arr1));
+	uint8_t* dptr2 = (uint8_t*)(PyArray_DATA(arr2));
 	// initialze return arrays
-	uint64_t* mod_res;
+	uint8_t* mod_res;
 	uint64_t res_len;
 
 	// perform polynomial division
@@ -124,92 +128,11 @@ poly_mod(PyObject *self, PyObject *args)
 	// dimension of return array, i.e. the number of values
 	npy_intp dims[1] = {res_len};
 	// create new array to return
-	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_UINT64, mod_res);
+	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_INT8, mod_res);
 	// increment counter, so that the memory is not freed
-	Py_INCREF(ret);
-	// forward the responsibility of the free to numpy
-	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
-	
-	return ret;
-}
-
-static PyObject* 
-poly_dot(PyObject *self, PyObject *args)
-{
-	PyObject* in1;
-	PyObject* in2;
-	PyObject* arr1;
-	PyObject* arr2;
-
-	// get arguments
-	PyArg_ParseTuple(args, "OO:", &in1, &in2);
-
-	// get np arrays
-	arr1 = PyArray_FROM_OTF(in1, NPY_NOTYPE, NPY_IN_ARRAY);
-	arr2 = PyArray_FROM_OTF(in2, NPY_NOTYPE, NPY_IN_ARRAY);
-	// get dimension of inputs, i.e. N, k, n
-	uint64_t* dim = (uint64_t*) PyArray_DIMS(arr1);
-	uint64_t N = *(dim);
-	uint64_t k = *(dim + 1);
-	uint64_t n = *(dim + 2);
-	
-	// get data from arrays
-	int64_t* dptr1 = (int64_t*) (PyArray_DATA(arr1));
-	double* dptr2 = (double*) (PyArray_DATA(arr2));
-	// initialze return arrays
-	double* dot_res;
-
-	// perform polynomial division
-	dot(dptr1, dptr2, n, k, N, &dot_res);
-	// print_int_array(lfsr, m);
-
-	// dimension of return array, i.e. the number of values
-	npy_intp dims[2] = {N, k};
-	// create new array to return
-	PyObject *ret = PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, dot_res);
-	// increment counter, so that the memory is not freed
-	Py_INCREF(ret);
-	// forward the responsibility of the free to numpy
-	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
-	
-	return ret;
-}
-
-static PyObject* 
-poly_eval_id_xor(PyObject *self, PyObject *args)
-{
-	PyObject* in1;
-	PyObject* in2;
-	PyObject* arr1;
-	PyObject* arr2;
-
-	// get arguments
-	PyArg_ParseTuple(args, "OO:", &in1, &in2);
-
-	// get np arrays
-	arr1 = PyArray_FROM_OTF(in1, NPY_NOTYPE, NPY_IN_ARRAY);
-	arr2 = PyArray_FROM_OTF(in2, NPY_NOTYPE, NPY_IN_ARRAY);
-	// get dimension of inputs, i.e. N, k, n
-	uint64_t* dim = (uint64_t*) PyArray_DIMS(arr1);
-	uint64_t N = *(dim);
-	uint64_t n = *(dim + 1);
-	uint64_t* dim_weights = (uint64_t*) PyArray_DIMS(arr2);
-	uint64_t k = *(dim_weights);
-	
-	// get data from arrays
-	int64_t* dptr1 = (int64_t*) (PyArray_DATA(arr1));
-	double*  dptr2 = (double*) (PyArray_DATA(arr2));
-	// initialze return arrays
-	int64_t* res;
-
-	// perform polynomial division
-	eval_id_xor(dptr1, dptr2, n, k, N, &res);
-	// dimension of return array, i.e. the number of values
-	npy_intp dims[1] = {N};
-	// create new array to return
-	PyObject *ret = PyArray_SimpleNewFromData(1, dims, NPY_INT64, res);
-	// increment counter, so that the memory is not freed
-	Py_INCREF(ret);
+	Py_DECREF(arr1);
+    Py_DECREF(arr2);
+    // Py_INCREF(ret);
 	// forward the responsibility of the free to numpy
 	PyArray_ENABLEFLAGS((PyArrayObject*)ret, NPY_ARRAY_OWNDATA);
 	
@@ -268,54 +191,6 @@ PyDoc_STRVAR(
     "\tDivisor.");
 
 PyDoc_STRVAR(
-    dot_doc,
-    "dot(inputs, weights)\n"
-    "--\n\n"
-    "Dot product of N inputs with weights.\n\n"
-    "The fist parameter is of shape (N, k, n) and\n"
-    "represents a set of N challenges for a k-Arbiter PUF.\n"
-    "The second parameter is of shape (k, n) and represents\n"
-    "the weight arrays of a k-Arbiter PUF.\n"
-    "The result is an array of shape (N, k) and represents\n"
-    "the evaluated real-value challenges with the k-Arbiter PUF.\n"
-    "\n"
-    "Parameters\n"
-    "----------\n"
-    "inputs : array_like\n"
-    "\tChallenges.\n"
-    "weights : array_like\n"
-    "\tWeights.\n\n"
-    "Return\n"
-    "------\n"
-    "return: array_like\n"
-    "\tEvaluated challenges."
-    );
-
-PyDoc_STRVAR(
-    eval_id_xor_doc,
-    "eval_id_xor(inputs, weights)\n"
-    "--\n\n"
-    "Evaluate N inputs from given weights.\n\n"
-    "The fist parameter is of shape (N, k, n) and\n"
-    "represents a set of N challenges for a k-Arbiter PUF.\n"
-    "The second parameter is of shape (k, n) and represents\n"
-    "the weight arrays of a k-Arbiter PUF.\n"
-    "The result is an array of shape (N) and represents\n"
-    "the evaluated challenges with the k-Arbiter PUF.\n"
-    "\n"
-    "Parameters\n"
-    "----------\n"
-    "inputs : array_like\n"
-    "\tChallenges.\n"
-    "weights : array_like\n"
-    "\tWeights.\n\n"
-    "Return\n"
-    "------\n"
-    "return: array_like\n"
-    "\tEvaluated challenges with sign."
-    );
-
-PyDoc_STRVAR(
     polymath_doc,
     "polymath is a lightweight and fast C-Extension for \n"
     "python3/numpy for univariate polynomials with coefficients \n"
@@ -325,8 +200,6 @@ static PyMethodDef PolymathMethods[] = {
 	{"polymul",  poly_mul, METH_VARARGS, polymul_doc},
 	{"polymodpad",  poly_mod_pad, METH_VARARGS, polymodpad_doc},
 	{"polymod",  poly_mod, METH_VARARGS, polymod_doc},
-	{"dot",  poly_dot, METH_VARARGS, dot_doc},
-	{"eval_id_xor",  poly_eval_id_xor, METH_VARARGS, eval_id_xor_doc},
 	{NULL, NULL, 0, NULL}		/* Sentinel */
 };
 

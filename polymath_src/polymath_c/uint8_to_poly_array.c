@@ -4,7 +4,7 @@
 
 #include "libpolymath.h"
 
-Poly_Array uint64_to_Poly_Array(const uint64_t* src, uint64_t src_len)
+Poly_Array uint8_to_Poly_Array(const uint8_t* src, uint64_t src_len)
 {
     /* Create new Poly_Array */
     Poly_Array poly;
@@ -29,17 +29,22 @@ Poly_Array uint64_to_Poly_Array(const uint64_t* src, uint64_t src_len)
     /* Initialze first bits of the polynomial that don't take the
        space of one whole uint64_t number. */
     uint64_t rem = (src_len - ctr) % (UINT64_BITS);
-    if (!rem)
+    if (!rem) {
         rem = UINT64_BITS;
+    }
+    uint64_t tmp = 0;
     for (size_t i = 0; i < rem; i++) {
-        *(poly.poly) ^= (*(src + i) & 0x0000000000000001) << (rem - 1 - i);
+        tmp = *(src + i) & 0x01;
+        *(poly.poly) ^= tmp << (rem - 1 - i);
     }
 
+    tmp = 0;
     /* Copy the rest of the array into uint64_t numbers */
     for (size_t i = 1; i < poly.len; i++) { // fill Poly_Array parts
         for (size_t j = 0; j < UINT64_BITS; j++) { // read single input bits
-            *(poly.poly + i) ^= (*(src + rem) & 0x0000000000000001) << (UINT64_BITS - 1 - j);
-            rem++;
+            tmp = *(src + i) & 0x01;
+            *(poly.poly + i) ^= tmp << (UINT64_BITS - 1 - j);
+            rem++; // rem is used as counter
         }
     }
 

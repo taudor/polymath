@@ -39,19 +39,19 @@ typedef struct Poly_Array
 
 
 /*
- * Transforms an array of uint64_t numbers into a Poly_Array.
+ * Transforms an array of uint8_t numbers into a Poly_Array.
  *
- * The array pointed to by uint64_t* src with length uint64_t src_len
+ * The array pointed to by uint8_t* src with length uint64_t src_len
  * is interpreted as a array containing only 0 and 1 and transformed
  * into a Poly_Array. That means that each of the original "bits"
  * now takes exactly one bit space.
  * The Poly_Array is interpreted as a univariate polynomial of
  * length (src_len // (sizeof(uint64_t) * 8) + 1). The degree of the polynomial
  * is the position of the first non-zero entry in the array minus one.
- * Only the rightmost bit of each uint64_t number is used as coefficient.
+ * Only the rightmost bit of each uint8_t number is used as coefficient.
  *
  * Parameters
- * src      -   pointer to the uint64_t array to transform to a Poly_Array
+ * src      -   pointer to the uint8_t array to transform to a Poly_Array
  * src_len  -   number of elements of src
  *
  * Return value
@@ -59,19 +59,19 @@ typedef struct Poly_Array
  * a Poly_Array object of the transformed array.
  * If the transformation is not successful a NULL pointer is returned.
  */
-Poly_Array uint64_to_Poly_Array(const uint64_t* src, uint64_t src_len);
+Poly_Array uint8_to_Poly_Array(const uint8_t* src, uint64_t src_len);
 
 
 /*
- * Transforms a Poly_Array into a uint64_t array.
+ * Transforms a Poly_Array into a uint8_t array.
  *
  * Parameters
- * poly - pointer to the Poly_Array that is to be converted into a uint64_t array
+ * poly - pointer to the Poly_Array that is to be converted into a uint8_t array
  *
  * Return value
- * Returns a pointer to an uint64_t array containing the values of poly
+ * Returns a pointer to an uint8_t array containing the values of poly
  */
-uint64_t* Poly_Array_to_uint64(Poly_Array* poly);
+uint8_t* Poly_Array_to_uint8(Poly_Array* poly);
 
 
 /*
@@ -85,8 +85,8 @@ void print_Poly_Array(Poly_Array* poly);
  *
  * The Poly_Array is interpreted as a LFSR. Shift all the coefficients
  * of the Poly_Array* poly one position to the left and save the
- * output in the variable uint64_t* out. The new input of the LFSR
- * is given by the variable uint64_t* in.
+ * output in the variable uint8_t* out. The new input of the LFSR
+ * is given by the variable uint8_t* in.
  *
  * Parameters
  * poly -   Pointer to the LFSR
@@ -95,7 +95,7 @@ void print_Poly_Array(Poly_Array* poly);
  * in   -   Pointer to the new input of the LFSR. The rightmost bit of
  *          the content of in will be the new rightmost bit of the LFSR.
  */
-void shift_LFSR(Poly_Array* lfsr, uint64_t* out, const uint64_t* in);
+void shift_LFSR(Poly_Array* lfsr, uint8_t* out, const uint8_t* in);
 
 
 /*
@@ -121,9 +121,9 @@ void shift_LFSR(Poly_Array* lfsr, uint64_t* out, const uint64_t* in);
  *              therefore always length (deg(B) - 1).
  */
 void
-polynomial_modulo_padding(const uint64_t* A, uint64_t n,
-                          const uint64_t* B, uint64_t m,
-                          uint64_t** ret_ptr, uint64_t* ret_len);
+polynomial_modulo_padding(const uint8_t* A, uint64_t n,
+                          const uint8_t* B, uint64_t m,
+                          uint8_t** ret_ptr, uint64_t* ret_len);
 
 
 /*
@@ -147,9 +147,9 @@ polynomial_modulo_padding(const uint64_t* A, uint64_t n,
  *              therefore always length (deg(B) - 1).
  */
 void
-polynomial_modulo(const uint64_t* A, uint64_t n,
-                  const uint64_t* B, uint64_t m,
-                  uint64_t** ret_ptr, uint64_t* ret_len);
+polynomial_modulo(const uint8_t* A, uint64_t n,
+                  const uint8_t* B, uint64_t m,
+                  uint8_t** ret_ptr, uint64_t* ret_len);
 
 
 /*
@@ -177,28 +177,9 @@ polynomial_modulo(const uint64_t* A, uint64_t n,
  * ret_len  -   Resulting number of elements of ret.
  */
 void
-polynomial_multiplication(const uint64_t* A, uint64_t n,
-                          const uint64_t* B, uint64_t m,
-                          uint64_t** ret_ptr, uint64_t* ret_len);
+polynomial_multiplication(const uint8_t* A, uint64_t n,
+                          const uint8_t* B, uint64_t m,
+                          uint8_t** ret_ptr, uint64_t* ret_len);
 
-/*
- * The dot product of an array with shape (N, k, n) with an
- * array of shape (k, n).
- * The result has shape (N, k)
- */
-void
-dot(const int64_t* inputs, const double* weights,
-    uint64_t n, uint64_t k, uint64_t N,
-    double** ret_ptr);
-
-/*
- * Evaluates N challenges with the weights.
- * inputs has shape (N, n), weights has shape (k, n).
- * Returns an array with N elements that are -1 or 1.
- */
-void
-eval_id_xor(const int64_t* inputs, const double* weights,
-            uint64_t n, uint64_t k, uint64_t N,
-            int64_t** ret_ptr);
 
 #endif
